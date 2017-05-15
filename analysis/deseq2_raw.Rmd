@@ -1,0 +1,19 @@
+---
+title: "Estimate the proportion of true null"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ashr)
+```
+
+### DEseq2 output
+```{r  echo=TRUE}
+deseq2 <- read.table("../data/for_ashr.txt", header=T)
+dim(deseq2)
+```
+```{r  echo=TRUE}
+head(deseq2)
+```
+

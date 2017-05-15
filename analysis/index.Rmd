@@ -11,7 +11,13 @@ Collaborated project at [Gilad Lab](http://giladlab.uchicago.edu/) and [Stephens
 
 ## Overview
 
-The basic idea is firstly to get an overview of how the distribution of the H3K9me3 mark differs between the 2 species and secondly whether there are particular transposable elements that are silenced specifically in one species and try to get at a mechanism for this as transposable element silencing is a rapidly evolving phenomenon. My collaborator can do the transposable element analysis in each species separately but we are likely to need help for the cross-species analysis. We would then ideally want to relate any differences in H3K9me3 occupancy with changes in gene expression.
+The basic idea is firstly to get an overview of how the distribution of the H3K9me3 mark differs between the 2 species and secondly whether there are particular transposable elements that are silenced specifically in one species and try to get at a mechanism for this as transposable element silencing is a rapidly evolving phenomenon.
 
-## Estimate proportion of similar regions between human and Chimp
-see analysis [here](ash_DEseq2.html).
+## Differential H3K9me3 in Human and Chimp (DESeq2)
+
+[Analysis of DESeq2 results](deseq2_raw.html) 
+
+## Apply ASH for DEseq2 results
+* [using normal mixture components](ash_deseq2_normal.html)
+* [using half-uniform misture components](ash_deseq2_halfuniform.html)
+

@@ -1,0 +1,2 @@
+# before_filter: before mappability filtering. These files contains autosomes only. Peak name= "Peak"+ line number. Files in this folder are used as input for mappability filtering.
+# after_filter: output files after mappability filtering. Filtering is based on pair-end mean region score. The cut off is 0.8. 

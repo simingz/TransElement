@@ -1,19 +1,30 @@
 ---
-title: "Estimate the proportion of true null"
+title: "DESeq2 outputs"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(ashr)
+library(limma)
 ```
 
 ### DEseq2 output
 ```{r  echo=TRUE}
-deseq2 <- read.table("../data/for_ashr.txt", header=T)
-dim(deseq2)
+deseq2raw <- read.table("../data/DEseq2_alldata_0.01.txt", header=T)
+dim(deseq2raw)
 ```
 ```{r  echo=TRUE}
-head(deseq2)
+head(deseq2raw)
+```
+### Distribution of z score
+```{r echo=T}
+hist(deseq2raw$stat, breaks=400, xlim=c(-20,20),col="lightgrey", border="gray", main ="z-score distribution")
+abline(v=0,col="red",lwd=2)
 ```
 
+### 
+```{r echo=T}
+y <- log2(deseq2raw[,9:24]) - log2(deseq2raw$baseMean)
+species <- as.factor(c(rep("H", 9), rep("C",7)))
+```

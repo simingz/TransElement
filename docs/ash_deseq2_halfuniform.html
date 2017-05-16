@@ -11,7 +11,7 @@
 
 
 
-<title>Estimate the proportion of true null</title>
+<title>Estimate the proportion of true null (half-uniform)</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -300,7 +300,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Estimate the proportion of true null</h1>
+<h1 class="title toc-ignore">Estimate the proportion of true null (half-uniform)</h1>
 
 </div>
 
@@ -339,14 +339,19 @@ deseq2.fit &lt;-readRDS(&quot;deseq2.fit.hu.RDS&quot;) # the above step may take
 <pre class="r"><code>t&lt;-seq(0,3,0.02)
 prop &lt;- ashr::cdf.ash(deseq2.fit, t)$y - ashr::cdf.ash(deseq2.fit, -t)$y
 plot(t,prop, main= &quot;proportion of regions with |log2Fold change| &lt; t&quot;, xlab= &quot;log2Fold change&quot;, ylab=&quot;proportion&quot;, yaxt=&quot;n&quot;, pch = 16, col=&quot;salmon&quot;, ylim=c(0,1))
-axis(2, at=pretty(runif(10)), lab=paste0(pretty(runif(10)) * 100, &quot; %&quot;), las=TRUE)
+xat = pretty(runif(10))
+axis(2, at=xat, lab=paste0(xat* 100, &quot; %&quot;), las=TRUE)
 grid()</code></pre>
-<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="diagnostic-plot-for-ash" class="section level3">
 <h3>Diagnostic plot for ASH</h3>
 <pre class="r"><code>plot_diagnostic(deseq2.fit)</code></pre>
-<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre><code>## Press [enter] to see next plot</code></pre>
+<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre><code>## Press [enter] to see next plot</code></pre>
+<p><img src="ash_deseq2_halfuniform_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
 </div>
 
 <hr>

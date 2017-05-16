@@ -1,5 +1,5 @@
 ---
-title: "Estimate the proportion of true null"
+title: "Estimate the proportion of true null (normal components)"
 output: html_document
 ---
 
@@ -32,7 +32,8 @@ deseq2.fit <-readRDS("deseq2.fit.normal.RDS") # the above step may take long wit
 t<-seq(0,3,0.02)
 prop <- ashr::cdf.ash(deseq2.fit, t)$y - ashr::cdf.ash(deseq2.fit, -t)$y
 plot(t,prop, main= "proportion of regions with |log2Fold change| < t", xlab= "log2Fold change", ylab="proportion", yaxt="n", pch = 16, col="salmon", ylim=c(0,1))
-axis(2, at=pretty(runif(10)), lab=paste0(pretty(runif(10)) * 100, " %"), las=TRUE)
+xat = pretty(runif(10))
+axis(2, at=xat, lab=paste0(xat* 100, " %"), las=TRUE)
 grid()
 ```
 

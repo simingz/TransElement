@@ -4,17 +4,14 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cathe=T)
 library(ashr)
 ```
 
 ### DEseq2 results
 ```{r  echo=TRUE}
-deseq2 <- read.table("../data/for_ashr.txt", header=T)
+deseq2 <- read.table("../data/DEseq2_alldata_0.01.txt", header=T)
 dim(deseq2)
-```
-```{r  echo=TRUE}
-head(deseq2)
 ```
 
 
@@ -23,8 +20,8 @@ head(deseq2)
 betahat <- deseq2$log2FoldChange
 sebetahat <- deseq2$lfcSE
 #deseq2.fit <- ashr::ash(betahat, sebetahat, mixcompdist = "normal", outputlevel=2)
-#save(deseq2.fit, file="deseq2.fit.normal.RDS")
-deseq2.fit <-readRDS("deseq2.fit.normal.RDS") # the above step may take long without REBayes
+#save(deseq2.fit, file="../output/deseq2.fit.normal.RDS")
+deseq2.fit <-readRDS("../output/deseq2.fit.normal.RDS") # the above step may take long without REBayes
 ```
 
 ### probability of |log2 fold change| < t
@@ -39,5 +36,5 @@ grid()
 
 ### Diagnostic plot for ASH
 ```{r echo=TRUE}
-plot_diagnostic(deseq2.fit)
+plot_diagnostic(deseq2.fit,plot.hist = T)
 ```

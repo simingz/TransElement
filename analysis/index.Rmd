@@ -13,11 +13,20 @@ Collaborated project at [Gilad Lab](http://giladlab.uchicago.edu/) and [Stephens
 
 The basic idea is firstly to get an overview of how the distribution of the H3K9me3 mark differs between the 2 species and secondly whether there are particular transposable elements that are silenced specifically in one species and try to get at a mechanism for this as transposable element silencing is a rapidly evolving phenomenon.
 
-## Differential H3K9me3 in Human and Chimp (DESeq2)
+## Differential H3K9me3 in Human and Chimp by DESeq2
 
-[Analysis of DESeq2 results](deseq2_raw.html) 
+### Analysis of DESeq2 results
+  * [Analysis of DESeq2 results](deseq2_raw.html) 
 
-## Apply ASH for DEseq2 results
-* [using normal mixture components](ash_deseq2_normal.html)
-* [using half-uniform misture components](ash_deseq2_halfuniform.html)
+### Apply ASH for DEseq2 results
+  * [using normal mixture components](ash_deseq2_normal.html)
+  * [using half-uniform misture components](ash_deseq2_halfuniform.html)
 
+## Differential H3K9me3 in Human and Chimp by voom + limma
+
+### Analysis of Voom+limma results
+  * [Analysis of Voom+limma results](VL_raw.html) 
+
+### Apply ASH for Voom+limma results
+* [using uniform mixture components](ash_VL_uniform.html)
+* [using half-uniform misture components](ash_VL_halfuniform.html)

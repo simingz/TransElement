@@ -4,27 +4,23 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = T)
 library(ashr)
 ```
 
 ### DEseq2 results
 ```{r  echo=TRUE}
-deseq2 <- read.table("../data/for_ashr.txt", header=T)
+deseq2 <- read.table("../data/DEseq2_alldata_0.01.txt", header=T)
 dim(deseq2)
 ```
-```{r  echo=TRUE}
-head(deseq2)
-```
-
 
 ### apply ashr
 ```{r  echo=TRUE}
 betahat <- deseq2$log2FoldChange
 sebetahat <- deseq2$lfcSE
 #deseq2.fit <- ashr::ash(betahat, sebetahat, mixcompdist = "halfuniform", outputlevel=2)
-#saveRDS(deseq2.fit, file="deseq2.fit.hu.RDS")
-deseq2.fit <-readRDS("deseq2.fit.hu.RDS") # the above step may take long without REBayes
+#saveRDS(deseq2.fit, file="../output/deseq2.fit.hu.RDS")
+deseq2.fit <-readRDS("../output/deseq2.fit.hu.RDS") # the above step may take long without REBayes
 ```
 
 ### probability of |log2 fold change| < t
@@ -33,11 +29,11 @@ t<-seq(0,3,0.02)
 prop <- ashr::cdf.ash(deseq2.fit, t)$y - ashr::cdf.ash(deseq2.fit, -t)$y
 plot(t,prop, main= "proportion of regions with |log2Fold change| < t", xlab= "log2Fold change", ylab="proportion", yaxt="n", pch = 16, col="salmon", ylim=c(0,1))
 xat = pretty(runif(10))
-axis(2, at=xat, lab=paste0(xat* 100, " %"), las=TRUE)
+axis(2, at=xat, lab=paste0(xat* 100, " %"), las=TRUE) 
 grid()
 ```
 
 ### Diagnostic plot for ASH
 ```{r echo=TRUE}
-plot_diagnostic(deseq2.fit)
+plot_diagnostic(deseq2.fit, plot.hist = T)
 ```

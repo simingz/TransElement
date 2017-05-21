@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Voom+Limma for raw data</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">TransElement</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Voom+Limma for raw data</h1>
+
+</div>
+
+
+<div id="prepare-data" class="section level2">
+<h2>prepare data</h2>
+<pre class="r"><code># code from Michelle
+countdata_filt&lt;-read.table(&quot;../data/after_filter/data.chrfl.txt.mappPE.mean0.8fl&quot;, header=F)
+header&lt;-read.table(&quot;../data/after_filter/header.txt&quot;,header=F)
+metapeaks.hg19.filt.raw&lt;-read.table(&quot;../data/after_filter/comm.hg19.bed.ortho.hg19.mappinput.chrfl.mappPE.mean0.8.bed.mappfl&quot;,header=F)
+metapeaks.panTro3.filt.raw&lt;-read.table(&quot;../data/after_filter/comm.hg19.bed.ortho.panTro3.mappinput.chrfl.mappPE.mean0.8.bed.mappfl&quot;,header=F)
+
+rownames(countdata_filt) &lt;- metapeaks.hg19.filt.raw[,4]
+colnames(countdata_filt)&lt;-as.matrix((header[1,]))
+colnames(metapeaks.hg19.filt.raw) &lt;- c(&quot;Chr&quot;, &quot;Start&quot;, &quot;End&quot;, &quot;Peak&quot;)
+colnames(metapeaks.panTro3.filt.raw) &lt;- c(&quot;Chr&quot;, &quot;Start&quot;, &quot;End&quot;, &quot;Peak&quot;)
+countdata_filt_noH20961 &lt;- countdata_filt[,c(1,2,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+                                             21,22,24,25,26,27,28,29,30,31,32,33,34)]
+H3K9countdata_noH20961&lt;-countdata_filt_noH20961[,c(2,5,6,7,8,10,13,15,17,18,19,20,23,26,27,32)]
+chipcounts100 =  H3K9countdata_noH20961[apply( H3K9countdata_noH20961&gt;0,1,sum) &gt; 10, ]
+condition_chip = c(&quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;C&quot;, &quot;H&quot;, &quot;H&quot;, &quot;C&quot;, &quot;C&quot;, &quot;H&quot;)
+input &lt;- list(counts= chipcounts100, condition = condition_chip)</code></pre>
+</div>
+<div id="calculate-normalization-factors" class="section level2">
+<h2>calculate normalization factors</h2>
+<pre class="r"><code>dgecounts = calcNormFactors(DGEList(counts=input$counts,group=input$condition))</code></pre>
+</div>
+<div id="voom-limma" class="section level2">
+<h2>voom + limma</h2>
+<pre class="r"><code>design = model.matrix(~input$condition)
+v = voom(dgecounts,design,plot=TRUE)</code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-3-1.png" width="672" /> ## limma</p>
+<pre class="r"><code>lim = lmFit(v)
+lim = eBayes(lim)
+saveRDS(lim, file=&quot;../output/VL.fit.RDS&quot;)</code></pre>
+<div id="distribution-of-z-score" class="section level3">
+<h3>Distribution of z score</h3>
+<pre class="r"><code>hist(lim$t, breaks=400, xlim=c(-20,20),col=&quot;lightgrey&quot;, border=&quot;gray&quot;, main =&quot;z-score distribution&quot;)
+abline(v=0,col=&quot;red&quot;,lwd=2)</code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="singular-values-of-residuals" class="section level3">
+<h3>singular values of residuals</h3>
+<pre class="r"><code>resid &lt;- v$E - lim$coefficients %*% t(lim$design)
+d &lt;- svd(resid)
+plot(d$d, ylab=&quot;singlar value&quot;)</code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="pca" class="section level3">
+<h3>PCA</h3>
+<pre class="r"><code>pcafit &lt;- prcomp(t(resid))
+summary(pcafit) # print variance accounted for </code></pre>
+<pre><code>## Importance of components:
+##                             PC1      PC2     PC3      PC4      PC5
+## Standard deviation     110.5986 101.9606 92.3218 89.10218 85.22032
+## Proportion of Variance   0.1274   0.1083  0.0888  0.08271  0.07566
+## Cumulative Proportion    0.1274   0.2357  0.3245  0.40725  0.48291
+##                             PC6      PC7      PC8      PC9     PC10
+## Standard deviation     81.47223 80.51915 77.97416 76.24560 74.83194
+## Proportion of Variance  0.06915  0.06754  0.06334  0.06056  0.05834
+## Cumulative Proportion   0.55207  0.61961  0.68295  0.74352  0.80186
+##                            PC11     PC12     PC13     PC14    PC15
+## Standard deviation     72.55173 68.79634 68.12143 65.95788 5.58715
+## Proportion of Variance  0.05484  0.04931  0.04835  0.04532 0.00033
+## Cumulative Proportion   0.85670  0.90601  0.95435  0.99967 1.00000
+##                             PC16
+## Standard deviation     7.119e-13
+## Proportion of Variance 0.000e+00
+## Cumulative Proportion  1.000e+00</code></pre>
+<pre class="r"><code>plot(pcafit,type=&quot;lines&quot;) # scree plot </code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>plot(pcafit$x,col=as.factor(input$condition),pch=16)
+grid()
+legend(&quot;topright&quot;,c(&quot;Human&quot;, &quot;Chimp&quot;), col=c(&quot;red&quot;,&quot;black&quot;),pch=16)</code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+</div>
+</div>
+<div id="estimate-number-of-hidden-confounders-with-svanum.sv" class="section level2">
+<h2>Estimate number of hidden confounders with <code>sva::num.sv</code></h2>
+<pre class="r"><code>svout &lt;- sva::num.sv(dat = v$E, mod = design)
+svout</code></pre>
+<pre><code>## [1] 5</code></pre>
+</div>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

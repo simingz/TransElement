@@ -1,0 +1,41 @@
+---
+title: "Estimate the proportion of true null (half-uniform)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = T)
+library(ashr)
+```
+
+### limma results
+```{r  echo=TRUE, cathe=T}
+lim <- readRDS("../output/VL.fit.RDS")
+```
+
+
+### apply ashr
+```{r  echo=TRUE, cathe=T}
+betahat = lim$coefficients[,2]
+sebetahat = lim$stdev.unscaled[,2]*sqrt(lim$s2.post) # EB shrunk s.e.
+vlfit <- ashr::ash(betahat, sebetahat, mixcompdist = "halfuniform",outputlevel=2, df=lim$df.total[1])
+saveRDS(vlfit, file="../output/VL.fit.halfuniform.RDS")
+#vlfit <-readRDS("output/VL.fit.normal.RDS") # the above step may take long without REBayes
+```
+
+### probability of |log2 fold change| < t
+```{r  echo=TRUE}
+t<-seq(0,3,0.02)
+prop <- ashr::cdf.ash(vlfit, t)$y - ashr::cdf.ash(vlfit, -t)$y
+plot(t,prop, main= "proportion of regions with |log2Fold change| < t", xlab= "log2Fold change", ylab="proportion", yaxt="n", pch = 16, col="salmon", ylim=c(0,1))
+xat = pretty(runif(10))
+axis(2, at=xat, lab=paste0(xat* 100, " %"), las=TRUE)
+grid()
+```
+
+### Diagnostic plot for ASH
+diagnostic plot of uniform mixture for non-normal likelihood is not yet implemented
+
+```{r echo=TRUE,cathe=T,eval=F}
+plot_diagnostic(vlfit,plot.hist = T)
+```

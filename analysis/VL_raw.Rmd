@@ -7,6 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(edgeR)
 library(limma)
+library(sva)
 ```
 
 ## prepare data
@@ -74,6 +75,36 @@ legend("topright",c("Human", "Chimp"), col=c("red","black"),pch=16)
 ## Estimate number of hidden confounders with `sva::num.sv`
 
 ```{r cathe=T}
-svout <- sva::num.sv(dat = v$E, mod = design)
+svout <- num.sv(dat = v$E, mod = design)
 svout
 ```
+
+## Remove confounders by SVA
+```{r cathe=T}
+mod = model.matrix(~input$condition)
+mod0 = model.matrix(~1,data=as.data.frame(input$condition))
+svobj = sva(v$E,mod,mod0,n.sv=svout)
+modSv = cbind(mod,svobj$sv)
+
+cm <- c(0,1,rep(0, svobj$n.sv))
+
+lim2 <- lmFit(v, modSv)
+lim2 <-contrasts.fit(lim2, cm)
+lim2 <-eBayes(lim2)
+
+HvC = topTable(lim, coef=2, adjust="BH", number=Inf, sort.by="none")
+sig.HvC = HvC[HvC$adj.P.Val < .01, ]
+
+HvC2 = topTable(lim2, coef=1, adjust="BH", number=Inf, sort.by="none")
+sig.HvC2 = HvC2[HvC2$adj.P.Val < .01, ] 
+```
+
+Total number of regions: `r dim(HvC)[1]`  
+Using  BH adjusted p value of 0.01 as cut off, number of signficant regions:  
+  * before removing confounders: `r dim(sig.HvC)[1]`, percentage: `r paste0(round(dim(sig.HvC)[1]/dim(HvC)[1] *100,2),"%")`  
+  * after removing confounders: `r dim(sig.HvC2)[1]`, percentage: `r paste0(round(dim(sig.HvC2)[1]/dim(HvC)[1] *100,2),"%")`  
+Number of regions gone after removing confounders: `r dim(HvC[HvC$adj.P.Val < .01 & HvC2$adj.P.Val >= .01, ])[1]`  
+Number of regions added after removing confoudners: `r dim(HvC[HvC$adj.P.Val >= .01 & HvC2$adj.P.Val < .01, ])[1]`  
+
+
+

@@ -32,25 +32,25 @@ input <- list(counts= chipcounts100, condition = condition_chip)
 ```
 
 ## calculate normalization factors
-```{r  echo=TRUE, cathe=T}
+```{r  echo=TRUE, cathe=F}
 dgecounts = calcNormFactors(DGEList(counts=input$counts,group=input$condition))
 ```
 
 ## voom + limma
-```{r  echo=TRUE, cathe=T}
+```{r  echo=TRUE, cathe=F}
 design = model.matrix(~input$condition)
 v = voom(dgecounts,design,plot=TRUE)
 ``` 
 ## limma
-```{r  echo=TRUE, cathe=T}
+```{r  echo=TRUE, cathe=F}
 lim = lmFit(v)
 lim = eBayes(lim)
 saveRDS(lim, file="../output/VL.fit.RDS")
 ```
 
 ### Distribution of z score
-```{r echo=T}
-hist(lim$t, breaks=400, xlim=c(-20,20),col="lightgrey", border="gray", main ="z-score distribution")
+```{r echo=T, cathe=F}
+hist(lim$t[,2], breaks=400, xlim=c(-20,20),col="lightgrey", border="gray", main ="z-score distribution")
 abline(v=0,col="red",lwd=2)
 ```
 
@@ -106,5 +106,12 @@ Using  BH adjusted p value of 0.01 as cut off, number of signficant regions:
 Number of regions gone after removing confounders: `r dim(HvC[HvC$adj.P.Val < .01 & HvC2$adj.P.Val >= .01, ])[1]`  
 Number of regions added after removing confoudners: `r dim(HvC[HvC$adj.P.Val >= .01 & HvC2$adj.P.Val < .01, ])[1]`  
 
+## Volcano plot
+```{r }
+with(HvC2, plot(logFC, -log10(adj.P.Val), pch=20, main="Volcano plot", xlim=c(-10,10)))
+with(subset(HvC2, adj.P.Val<0.01) , points(logFC, -log10(adj.P.Val), pch=20, col="orange"))
+```
 
+Number of significant regions enriched in human:`r dim(subset(sig.HvC2, logFC>0))[1]`  
+Number of significnat regions enriched chimp: `r  dim(subset(sig.HvC2, logFC<0))[1]`
 

@@ -338,7 +338,7 @@ lim = eBayes(lim)
 saveRDS(lim, file=&quot;../output/VL.fit.RDS&quot;)</code></pre>
 <div id="distribution-of-z-score" class="section level3">
 <h3>Distribution of z score</h3>
-<pre class="r"><code>hist(lim$t, breaks=400, xlim=c(-20,20),col=&quot;lightgrey&quot;, border=&quot;gray&quot;, main =&quot;z-score distribution&quot;)
+<pre class="r"><code>hist(lim$t[,2], breaks=400, xlim=c(-20,20),col=&quot;lightgrey&quot;, border=&quot;gray&quot;, main =&quot;z-score distribution&quot;)
 abline(v=0,col=&quot;red&quot;,lwd=2)</code></pre>
 <p><img src="VL_raw_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
@@ -367,7 +367,7 @@ summary(pcafit) # print variance accounted for </code></pre>
 ## Proportion of Variance  0.05484  0.04931  0.04835  0.04532 0.00033
 ## Cumulative Proportion   0.85670  0.90601  0.95435  0.99967 1.00000
 ##                             PC16
-## Standard deviation     7.106e-13
+## Standard deviation     7.125e-13
 ## Proportion of Variance 0.000e+00
 ## Cumulative Proportion  1.000e+00</code></pre>
 <pre class="r"><code>plot(pcafit,type=&quot;lines&quot;) # scree plot </code></pre>
@@ -410,6 +410,14 @@ Using BH adjusted p value of 0.01 as cut off, number of signficant regions:<br /
 * after removing confounders: 15830, percentage: 11.2%<br />
 Number of regions gone after removing confounders: 406<br />
 Number of regions added after removing confoudners: 2790</p>
+</div>
+<div id="volcano-plot" class="section level2">
+<h2>Volcano plot</h2>
+<pre class="r"><code>with(HvC2, plot(logFC, -log10(adj.P.Val), pch=20, main=&quot;Volcano plot&quot;, xlim=c(-10,10)))
+with(subset(HvC2, adj.P.Val&lt;0.01) , points(logFC, -log10(adj.P.Val), pch=20, col=&quot;orange&quot;))</code></pre>
+<p><img src="VL_raw_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Number of significant regions enriched in human:7852<br />
+Number of significnat regions enriched chimp: 7978</p>
 </div>
 
 <hr>
